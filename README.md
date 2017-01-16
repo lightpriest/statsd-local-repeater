@@ -25,7 +25,7 @@ current application stack. Everything continues to work as it is.
 Using
 -----
 
-```
+```bash
 git clone git@github.com:lightpriest/statsd-local-repeater.git
 cd statsd-local-repeater
 make
