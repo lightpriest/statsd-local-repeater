@@ -145,7 +145,7 @@ int main(int argc, char **argv) {
   hints.ai_flags=AI_ADDRCONFIG;
 
   if (verbose) fprintf(stderr, "getaddrinfo: %s:%s\n", dest_host, dest_port);
-	ret = getaddrinfo(dest_host, dest_port, &hints, &target_addr);
+  ret = getaddrinfo(dest_host, dest_port, &hints, &target_addr);
   if (ret != 0) {
     fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(ret));
     exit(1);
@@ -171,43 +171,43 @@ int main(int argc, char **argv) {
 static void handler(u_char *arg, const struct pcap_pkthdr *header,
   const u_char *packet) {
 
-	struct ether_header *eth_header;
-	eth_header = (struct ether_header *) packet;
-	if (ntohs(eth_header->ether_type) != ETHERTYPE_IP) {
-			printf("Not an IP packet. Skipping...\n\n");
-			return;
-	}
+  struct ether_header *eth_header;
+  eth_header = (struct ether_header *) packet;
+  if (ntohs(eth_header->ether_type) != ETHERTYPE_IP) {
+  printf("Not an IP packet. Skipping...\n\n");
+  return;
+  }
 
-	/* Pointers to start point of various headers */
-	const u_char *ip_header;
-	const u_char *payload;
+  /* Pointers to start point of various headers */
+  const u_char *ip_header;
+  const u_char *payload;
 
-	/* Header lengths in bytes */
-	int ethernet_header_length = 14; /* Doesn't change */
-	int ip_header_length;
-	int udp_header_length;
-	int payload_length;
+  /* Header lengths in bytes */
+  int ethernet_header_length = 14; /* Doesn't change */
+  int ip_header_length;
+  int udp_header_length;
+  int payload_length;
 
-	ip_header = packet + ethernet_header_length;
-	ip_header_length = ((*ip_header) & 0x0F);
-	ip_header_length = ip_header_length * 4;
+  ip_header = packet + ethernet_header_length;
+  ip_header_length = ((*ip_header) & 0x0F);
+  ip_header_length = ip_header_length * 4;
 
-	u_char protocol = *(ip_header + 9);
-	if (protocol != IPPROTO_UDP) {
-		printf("Not a UDP packet. Skipping...\n\n");
-		return;
-	}
+  u_char protocol = *(ip_header + 9);
+  if (protocol != IPPROTO_UDP) {
+  printf("Not a UDP packet. Skipping...\n\n");
+  return;
+  }
 
-	udp_header_length = 8;
+  udp_header_length = 8;
 
-	/* Add up all the header sizes to find the payload offset */
-	int total_headers_size = ethernet_header_length +
+  /* Add up all the header sizes to find the payload offset */
+  int total_headers_size = ethernet_header_length +
         ip_header_length + udp_header_length;
-	payload_length = header->caplen -
-		(ethernet_header_length + ip_header_length + udp_header_length);
-	payload = packet + total_headers_size;
+  payload_length = header->caplen -
+  (ethernet_header_length + ip_header_length + udp_header_length);
+  payload = packet + total_headers_size;
 
-	if (payload_length > 0) {
+  if (payload_length > 0) {
     int ret = sendto(target_fd, payload, payload_length, 0,
       target_addr->ai_addr, target_addr->ai_addrlen);
     if (ret == -1) {
